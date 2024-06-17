@@ -3,7 +3,7 @@ import numpy as np
 import gymjsp
 
 
-def load_instance(instance: str = 'ft6'):
+def load_instance(instance: str = "ft6"):
     """
     Loads the specified JSSP instance and gets the matrix used to describe that instance.
 
@@ -12,17 +12,17 @@ def load_instance(instance: str = 'ft6'):
 
     Returns:
         * N: Number of jobs.
-        
+
         * M: Number of machines
-        
+
         * time_mat: The processing time matrix. Shape is (N, M).
-        
+
         * machine_mat: The machine processing matrix. Shape is (N, M).
     Example:
         >>> N, M, time_mat, machine_mat = load_instance('abz5')
     """
-    path = os.path.join(os.path.dirname(gymjsp.__file__), 'jobshop', 'jobshop.txt')
-    
+    path = os.path.join(os.path.dirname(gymjsp.__file__), "jobshop", "jobshop.txt")
+
     assert os.path.exists(path)
     assert os.path.isfile(path)
 
@@ -42,7 +42,7 @@ def load_instance(instance: str = 'ft6'):
                 break
         line = lines[start]
         line = line.strip()
-        line = list(filter(None, line.split(' ')))
+        line = list(filter(None, line.split(" ")))
         assert len(line) == 2
         N = int(line[0])
         M = int(line[1])
@@ -53,7 +53,7 @@ def load_instance(instance: str = 'ft6'):
             time = []
             line = lines[start + i]
             line = line.strip()
-            line = list(filter(None, line.split(' ')))
+            line = list(filter(None, line.split(" ")))
             line = [int(x) for x in line]
 
             for j in range(M):
@@ -70,29 +70,31 @@ def load_instance(instance: str = 'ft6'):
 
 def load_random(N, M):
     """
-    Load several randomly generated JSSP instances according to certain rules, 
+    Load several randomly generated JSSP instances according to certain rules,
     and obtain the relevant information describing these instances.
 
     Args:
         * N: number of jobs for the instance to be generated. Optional values: {15, 20, 30, 50, 100}.
-        
+
         * M: Number of machines to generate instances. Optional values: {15, 20}.
 
     Returns:
         * I: Number of instances.
 
         * N: Number of jobs.
-        
+
         * M: Number of machines
-        
+
         * time_mat: The processing time matrix. Shape is (I, N, M).
-        
+
         * machine_mat: The machine processing matrix. Shape is (I, N, M).
     Example:
         >>> I, N, M, time_mat, machine_mat = load_random(30, 15)
     """
 
-    path = os.path.join(os.path.dirname(gymjsp.__file__), 'jobshop','tai{}_{}.txt'.format(N, M))
+    path = os.path.join(
+        os.path.dirname(gymjsp.__file__), "jobshop", "tai{}_{}.txt".format(N, M)
+    )
     # print(path)
     assert os.path.exists(path)
     assert os.path.isfile(path)
@@ -111,7 +113,7 @@ def load_random(N, M):
             if line[0].isalpha():
                 state = __next_state(state)
                 continue
-            nums = list(filter(None, line.split(' ')))
+            nums = list(filter(None, line.split(" ")))
 
             if "row" == state:
                 if machine:
@@ -120,15 +122,11 @@ def load_random(N, M):
                     times.append(time)
                     time = []
             elif "times" == state:
-                time.append(
-                    [int(num) for num in nums]
-                )
+                time.append([int(num) for num in nums])
             elif "machines" == state:
-                machine.append(
-                    [int(num) for num in nums]
-                )
+                machine.append([int(num) for num in nums])
             else:
-                raise RuntimeError('State error.')
+                raise RuntimeError("State error.")
 
         machines.append(machine)
         times.append(time)
@@ -145,9 +143,9 @@ def __next_state(state):
     if "start" == state:
         return "row"
     elif "row" == state:
-        return 'times'
+        return "times"
     elif "times" == state:
-        return 'machines'
+        return "machines"
     elif "machines" == state:
         return "row"
     else:
